@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Komunitas Nama Komunitas</title>
+
+<!-- =====================================================================
+     WEBSITE KOMUNITAS — SATU HALAMAN (HTML + CSS + JS, tanpa library)
+     ---------------------------------------------------------------------
+     CARA GANTI ISI:
+     Semua teks, link, dan gambar diatur di bagian "KONFIGURASI" di bawah
+     (cari tulisan "KONFIGURASI UTAMA"). Cukup edit nilai di sana,
+     tidak perlu menyentuh kode di bawahnya.
+
+     GANTI GAMBAR:
+     Isi URL gambar Anda pada bannerUrl, profileUrl, dan thumbnail
+     (bagian "edits"). Contoh: "https://situs-saya.com/banner.jpg"
+     Sementara ini memakai placeholder abu-abu yang dibuat langsung
+     oleh kode, jadi website tetap tampil rapi walau offline.
+     ===================================================================== -->
+
+<style>
+/* ================== WARNA & DASAR ================== */
+:root {
+  --bg: #0a0a0a;            /* latar halaman */
+  --bg-2: #121212;          /* latar sekunder */
+  --card: #1c1c1c;          /* kartu */
+  --card-2: #2a2a2a;        /* kartu / border lebih terang */
+  --border: #2a2a2a;
+  --text: #e5e5e5;          /* teks utama */
+  --text-2: #d4d4d4;        /* teks sekunder */
+  --muted: #a3a3a3;         /* teks redup */
+  --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+/* ================== NAVIGASI (STICKY) ================== */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-inner {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 56px;
+}
+
+.nav-logo {
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+
+.nav-tabs { display: flex; gap: 4px; overflow-x: auto; }
+.nav-tabs::-webkit-scrollbar { display: none; }
+
+/* Tab: garis bawah muncul saat aktif */
+.nav-tab {
+  position: relative;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--muted);
+  border-radius: 8px;
+  white-space: nowrap;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+.nav-tab:hover { color: var(--text); background: var(--card); }
+.nav-tab.active { color: var(--text); font-weight: 600; }
+.nav-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 14px; right: 14px; bottom: 0;
+  height: 2px;
+  background: var(--text-2);   /* penanda abu terang */
+  border-radius: 2px;
+}
+
+/* ================== HALAMAN HOME ================== */
+.page { max-width: 1000px; margin: 0 auto; padding: 0 16px 64px; }
+
+/* 1) Banner */
+.banner-wrap { position: relative; margin-bottom: 44px; }
+.banner {
+  width: 100%;
+  height: 320px;               /* 250–350px */
+  object-fit: cover;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: var(--card);
+}
+
+/* 2) Profil + nama + member + tombol Join */
+.profile-row {
+  position: absolute;
+  left: 24px;
+  bottom: -44px;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+.avatar {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--bg);
+  background: var(--card-2);
+}
+.profile-meta { padding-bottom: 6px; }
+.profile-meta h1 { font-size: 22px; line-height: 1.2; }
+.member-count { font-size: 13px; color: var(--muted); margin-top: 2px; }
+
+.join-btn {
+  margin-left: auto;
+  margin-bottom: 6px;
+  padding: 9px 22px;
+  border-radius: 999px;
+  background: var(--text);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+.join-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* 3) Deskripsi */
+.about {
+  margin-top: 56px;
+  padding: 20px 22px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 15px;
+  color: var(--text-2);
+}
+.about h2 {
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* 4) Best Edit — grid kartu */
+.section-title {
+  margin: 36px 0 16px;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title .count {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  /* 3 kolom di desktop */
+  gap: 16px;
+}
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-3px);            /* hover halus */
+  border-color: var(--card-2);
+  background: #202020;
+}
+.thumb {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--card-2);
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Tombol putar di tengah thumbnail */
+.play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play span {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.card:hover .play span { transform: scale(1.1); background: rgba(10, 10, 10, 0.85); }
+.play svg { width: 20px; height: 20px; fill: #fff; margin-left: 3px; }
+
+.card-body { padding: 14px 16px 16px; }
+.card-title { font-size: 15px; font-weight: 600; }
+.card-editor { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.card-link {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 14px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.card-link:hover { background: var(--card-2); border-color: #3a3a3a; }
+
+/* ================== RESPONSIF (MOBILE) ================== */
+@media (max-width: 768px) {
+  .banner { height: 250px; }
+  .banner-wrap { margin-bottom: 52px; }
+
+  /* Profil memindah ke bawah banner, susun vertikal */
+  .profile-row {
+    position: static;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: -48px;
+  }
+  .avatar { width: 84px; height: 84px; }
+  .join-btn { margin: 6px 0 0; }
+
+  /* Grid: 2 kolom di layar kecil-sedang, 1 kolom di layar sempit */
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+}
+@media (max-width: 480px) {
+  .grid { grid-template-columns: 1fr; }
+  .nav-logo { font-size: 13px; }
+  .nav-tab { padding: 10px 10px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ================== NAVIGASI ================== -->
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-logo" id="navLogo"></span>
+    <div class="nav-tabs" id="navTabs"><!-- diisi oleh JS --></div>
+  </div>
+</nav>
+
+<!-- ================== HOME ================== -->
+<main class="page">
+
+  <!-- 1) Banner -->
+  <div class="banner-wrap">
+    <img class="banner" id="bannerImg" alt="Banner komunitas">
+    <!-- 2) Foto profil, nama, jumlah member, tombol Join -->
+    <div class="profile-row">
+      <img class="avatar" id="profileImg" alt="Foto profil komunitas">
+      <div class="profile-meta">
+        <h1 id="communityName"></h1>
+        <div class="member-count" id="memberCount"></div>
+      </div>
+      <a class="join-btn" id="joinBtn" target="_blank" rel="noopener">Join</a>
+    </div>
+  </div>
+
+  <!-- 3) Deskripsi -->
+  <section class="about">
+    <h2>Tentang Komunitas</h2>
+    <p id="aboutText"></p>
+  </section>
+
+  <!-- 4) Best Edit -->
+  <h2 class="section-title">Best Edit <span class="count" id="editCount"></span></h2>
+  <div class="grid" id="editGrid"><!-- kartu diisi oleh JS --></div>
+
+</main>
+
+<script>
+/* =====================================================================
+   KONFIGURASI UTAMA — edit bagian ini saja
+   ===================================================================== */
+const CONFIG = {
+
+  // --- Identitas komunitas ---
+  name: "Nama Komunitas",              // ganti dengan nama komunitas Anda
+  memberCount: "1.2K member",          // jumlah member (bebas formatnya)
+
+  // --- Gambar (ganti URL di bawah dengan gambar Anda sendiri) ---
+  bannerUrl: "",                       // contoh: "https://situs.com/banner.jpg"
+  profileUrl: "",                      // contoh: "https://situs.com/profil.jpg"
+
+  // --- Teks deskripsi ---
+  about: "Kami adalah komunitas kreatif yang berkumpul untuk berbagi karya, "
+       + "belajar bersama, dan saling mendukung. Di sini kamu bisa ikut diskusi, "
+       + "mengikuti event rutin, dan menampilkan hasil kerja terbaikmu. "
+       + "Semua level welcome — yang penting semangat berkarya!",
+
+  // --- Link tab & tombol (ganti dengan link asli komunitas Anda) ---
+  links: {
+    discord: "https://discord.gg/CONTOH-LINK",   // placeholder — ganti
+    tiktok:  "https://www.tiktok.com/@CONTOH",   // placeholder — ganti
+    news:    "https://contoh.com/news",          // placeholder — ganti
+  },
+
+  // --- Best Edit: 6 contoh placeholder ---
+  // "thumb": URL gambar/video thumbnail (kosong = placeholder abu-abu)
+  // "url":   tautan saat tombol "Lihat" diklik (mis. posting, video)
+  edits: [
+    { title: "Edit Pertama",   editor: "Editor A", thumb: "", url: "#" },
+    { title: "Edit Kedua",     editor: "Editor B", thumb: "", url: "#" },
+    { title: "Edit Ketiga",    editor: "Editor C", thumb: "", url: "#" },
+    { title: "Edit Keempat",   editor: "Editor D", thumb: "", url: "#" },
+    { title: "Edit Kelima",    editor: "Editor E", thumb: "", url: "#" },
+    { title: "Edit Keenam",    editor: "Editor F", thumb: "", url: "#" },
+  ],
+};
+/* =====================================================================
+   AKHIR KONFIGURASI — kode di bawah tidak perlu diubah
+   ===================================================================== */
+
+// Placeholder abu-abu yang dibuat otomatis (SVG), dipakai kalau URL kosong.
+// Ini supaya file bisa dibuka tanpa internet dan gambarnya mudah diganti.
+function placeholder(w, h, label) {
+  const svg =
+    `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>` +
+    `<rect width='100%' height='100%' fill='#1c1c1c'/>` +
+    `<text x='50%' y='50%' fill='#5a5a5a' font-family='Arial' font-size='16'` +
+    ` text-anchor='middle' dominant-baseline='middle'>${label}</text></svg>`;
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+
+// --- Nav: logo + tab ---
+document.getElementById("navLogo").textContent = CONFIG.name;
+
+const tabs = [
+  { label: "Home",    href: "#",     active: true },          // tab halaman ini
+  { label: "Discord", href: CONFIG.links.discord, external: true },
+  { label: "TikTok",  href: CONFIG.links.tiktok,  external: true },
+  { label: "News",    href: CONFIG.links.news,    external: true },
+];
+document.getElementById("navTabs").innerHTML = tabs.map(t =>
+  `<a class="nav-tab${t.active ? " active" : ""}" href="${t.href}"
+      ${t.external ? 'target="_blank" rel="noopener"' : ""}>${t.label}</a>`
+).join("");
+
+// --- Banner, profil, nama, member, Join ---
+const bannerImg = document.getElementById("bannerImg");
+bannerImg.src = CONFIG.bannerUrl || placeholder(1200, 320, "BANNER — ganti URL di CONFIG");
+if (CONFIG.bannerUrl) bannerImg.alt = "Banner " + CONFIG.name;
+
+const profileImg = document.getElementById("profileImg");
+profileImg.src = CONFIG.profileUrl || placeholder(200, 200, "FOTO");
+if (CONFIG.profileUrl) profileImg.alt = "Profil " + CONFIG.name;
+
+document.getElementById("communityName").textContent = CONFIG.name;
+document.getElementById("memberCount").textContent = CONFIG.memberCount;
+
+const joinBtn = document.getElementById("joinBtn");
+joinBtn.href = CONFIG.links.discord;   // tombol Join diarahkan ke Discord
+
+// --- Deskripsi ---
+document.getElementById("aboutText").textContent = CONFIG.about;
+
+// --- Best Edit: bangun kartu dari CONFIG ---
+const playIcon =
+  `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+
+document.getElementById("editCount").textContent = CONFIG.edits.length + " karya";
+document.getElementById("editGrid").innerHTML = CONFIG.edits.map((e, i) =>
+  `<article class="card">
+     <a class="thumb" href="${e.url}" target="_blank" rel="noopener" aria-label="Buka ${e.title}">
+       <img src="${e.thumb || placeholder(640, 400, "EDIT " + (i + 1))}" alt="Thumbnail ${e.title}" loading="lazy">
+       <span class="play"><span>${playIcon}</span></span>
+     </a>
+     <div class="card-body">
+       <div class="card-title">${e.title}</div>
+       <div class="card-editor">by ${e.editor}</div>
+       <a class="card-link" href="${e.url}" target="_blank" rel="noopener">Lihat</a>
+     </div>
+   </article>`
+).join("");
+</script>
+</body>
+</html>
