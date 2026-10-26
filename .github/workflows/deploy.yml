@@ -12,9 +12,13 @@ jobs:
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
-          TARGET: ${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
+          USER_CLEAN=$(printf '%s' "$VPS_USER" | tr -d '[:space:]')
+          HOST_CLEAN=$(printf '%s' "$VPS_HOST" | tr -d '[:space:]')
           install -m 700 -d ~/.ssh
-          echo "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-          echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
-          ssh -o StrictHostKeyChecking=yes "$TARGET" deploy
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+          ssh -o StrictHostKeyChecking=yes "${USER_CLEAN}@${HOST_CLEAN}" deploy
