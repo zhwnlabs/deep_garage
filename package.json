@@ -1,0 +1,10 @@
+{
+  "name": "website-komunitas",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Website komunitas satu halaman (HTML + CSS + JS, tanpa library)",
+  "scripts": {
+    "dev": "python3 serve.py",
+    "start": "python3 serve.py"
+  }
+}
