@@ -148,100 +148,39 @@ img { display: block; max-width: 100%; }
 }
 .join-btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
-/* 3) Deskripsi */
-.about {
-  margin-top: 56px;
-  padding: 20px 22px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 15px;
-  color: var(--text-2);
-}
-.about h2 {
-  font-size: 13px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
 
-/* 4) Best Edit — grid kartu */
+/* 3) About — foto + deskripsi berselang-seling */
 .section-title {
-  margin: 36px 0 16px;
+  margin: 36px 0 20px;
   font-size: 20px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
-.section-title .count {
-  font-size: 12px;
-  color: var(--muted);
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 2px 10px;
-  border-radius: 999px;
-}
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);  /* 3 kolom di desktop */
-  gap: 16px;
-}
-
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
-}
-.card:hover {
-  transform: translateY(-3px);            /* hover halus */
-  border-color: var(--card-2);
-  background: #202020;
-}
-.thumb {
-  position: relative;
-  aspect-ratio: 16 / 10;
-  background: var(--card-2);
-}
-.thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-/* Tombol putar di tengah thumbnail */
-.play {
-  position: absolute;
-  inset: 0;
+.about-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 28px;
+  margin-bottom: 32px;
 }
-.play span {
-  width: 52px; height: 52px;
-  border-radius: 50%;
-  background: rgba(10, 10, 10, 0.65);
-  backdrop-filter: blur(4px);
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
-.card:hover .play span { transform: scale(1.1); background: rgba(10, 10, 10, 0.85); }
-.play svg { width: 20px; height: 20px; fill: #fff; margin-left: 3px; }
+/* Foto 1 & 3: deskripsi di kiri, foto di kanan.
+   Foto 2: sebaliknya (foto di kiri) via .reverse */
+.about-row.reverse { flex-direction: row-reverse; }
 
-.card-body { padding: 14px 16px 16px; }
-.card-title { font-size: 15px; font-weight: 600; }
-.card-editor { font-size: 13px; color: var(--muted); margin-top: 3px; }
-.card-link {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-2);
+.about-photo { flex: 0 0 46%; max-width: 46%; }
+.about-photo img {
+  width: 100%;
+  height: auto;                /* rasio asli foto dipertahankan */
+  border-radius: var(--radius);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 6px 14px;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  background: var(--card);
 }
-.card-link:hover { background: var(--card-2); border-color: #3a3a3a; }
+
+.about-text { flex: 1; }
+.about-text h3 { font-size: 17px; margin-bottom: 8px; }
+.about-text p { font-size: 14px; color: var(--text-2); }
+
 
 /* ================== RESPONSIF (MOBILE) ================== */
 @media (max-width: 768px) {
@@ -259,11 +198,12 @@ img { display: block; max-width: 100%; }
   .avatar { width: 84px; height: 84px; }
   .join-btn { margin: 6px 0 0; }
 
-  /* Grid: 2 kolom di layar kecil-sedang, 1 kolom di layar sempit */
-  .grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  /* About: foto ditumpuk di atas deskripsi */
+  .about-row { flex-direction: column; align-items: stretch; }
+  .about-row.reverse { flex-direction: column; }
+  .about-photo { flex: none; max-width: 100%; order: -1; }
 }
 @media (max-width: 480px) {
-  .grid { grid-template-columns: 1fr; }
   .nav-logo { font-size: 13px; }
   .nav-tab { padding: 10px 10px; font-size: 13px; }
 }
@@ -296,15 +236,9 @@ img { display: block; max-width: 100%; }
     </div>
   </div>
 
-  <!-- 3) Deskripsi -->
-  <section class="about">
-    <h2>Tentang Komunitas</h2>
-    <p id="aboutText"></p>
-  </section>
-
-  <!-- 4) Best Edit -->
-  <h2 class="section-title">Best Edit <span class="count" id="editCount"></span></h2>
-  <div class="grid" id="editGrid"><!-- kartu diisi oleh JS --></div>
+  <!-- 3) About — foto + deskripsi berselang-seling -->
+  <h2 class="section-title">About</h2>
+  <div id="aboutList"><!-- baris foto diisi oleh JS --></div>
 
 </main>
 
@@ -322,11 +256,13 @@ const CONFIG = {
   bannerUrl: "asset/banner.png",
   profileUrl: "asset/profile.png",                     
 
-  // --- Teks deskripsi ---
-  about: "Kami adalah komunitas kreatif yang berkumpul untuk berbagi karya, "
-       + "belajar bersama, dan saling mendukung. Di sini kamu bisa ikut diskusi, "
-       + "mengikuti event rutin, dan menampilkan hasil kerja terbaikmu. "
-       + "Semua level welcome — yang penting semangat berkarya!",
+  // --- About: foto + deskripsi singkat ---
+  // "image": URL foto (kosong = placeholder abu-abu). Rasio asli foto dipertahankan.
+  about: [
+    { title: "Foto 1", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "" },
+    { title: "Foto 2", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "" },
+    { title: "Foto 3", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "" },
+  ],
 
   // --- Link tab & tombol (ganti dengan link asli komunitas Anda) ---
   links: {
@@ -335,17 +271,6 @@ const CONFIG = {
     news:    "https://contoh.com/news",          // placeholder — ganti
   },
 
-  // --- Best Edit: 6 contoh placeholder ---
-  // "thumb": URL gambar/video thumbnail (kosong = placeholder abu-abu)
-  // "url":   tautan saat tombol "Lihat" diklik (mis. posting, video)
-  edits: [
-    { title: "Edit Pertama",   editor: "Editor A", thumb: "", url: "#" },
-    { title: "Edit Kedua",     editor: "Editor B", thumb: "", url: "#" },
-    { title: "Edit Ketiga",    editor: "Editor C", thumb: "", url: "#" },
-    { title: "Edit Keempat",   editor: "Editor D", thumb: "", url: "#" },
-    { title: "Edit Kelima",    editor: "Editor E", thumb: "", url: "#" },
-    { title: "Edit Keenam",    editor: "Editor F", thumb: "", url: "#" },
-  ],
 };
 /* =====================================================================
    AKHIR KONFIGURASI — kode di bawah tidak perlu diubah
@@ -391,26 +316,17 @@ document.getElementById("memberCount").textContent = CONFIG.memberCount;
 const joinBtn = document.getElementById("joinBtn");
 joinBtn.href = CONFIG.links.discord;   // tombol Join diarahkan ke Discord
 
-// --- Deskripsi ---
-document.getElementById("aboutText").textContent = CONFIG.about;
-
-// --- Best Edit: bangun kartu dari CONFIG ---
-const playIcon =
-  `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
-
-document.getElementById("editCount").textContent = CONFIG.edits.length + " karya";
-document.getElementById("editGrid").innerHTML = CONFIG.edits.map((e, i) =>
-  `<article class="card">
-     <a class="thumb" href="${e.url}" target="_blank" rel="noopener" aria-label="Buka ${e.title}">
-       <img src="${e.thumb || placeholder(640, 400, "EDIT " + (i + 1))}" alt="Thumbnail ${e.title}" loading="lazy">
-       <span class="play"><span>${playIcon}</span></span>
-     </a>
-     <div class="card-body">
-       <div class="card-title">${e.title}</div>
-       <div class="card-editor">by ${e.editor}</div>
-       <a class="card-link" href="${e.url}" target="_blank" rel="noopener">Lihat</a>
+// --- About: bangun baris foto + deskripsi (selang-seling kiri/kanan) ---
+document.getElementById("aboutList").innerHTML = CONFIG.about.map((a, i) =>
+  `<div class="about-row${i % 2 === 1 ? " reverse" : ""}">
+     <div class="about-text">
+       <h3>${a.title}</h3>
+       <p>${a.text}</p>
      </div>
-   </article>`
+     <div class="about-photo">
+       <img src="${a.image || placeholder(640, 420, "FOTO " + (i + 1))}" alt="${a.title}" loading="lazy">
+     </div>
+   </div>`
 ).join("");
 </script>
 </body>
