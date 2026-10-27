@@ -75,6 +75,14 @@ README.md       <- panduan ini
 CARA-PUSH.md    <- cara menimpa repo GitHub
 ```
 
+## Mode perawatan
+
+Buka `index.html`, cari `CONFIG.maintenance` di bagian KONFIGURASI UTAMA, lalu
+ubah `enabled: false` menjadi `enabled: true`. Website akan menampilkan
+halaman "Sedang Dalam Perawatan" kepada semua pengunjung — tab navigasi
+disembunyikan sementara. Judul, status, pesan, dan catatan bug bisa diubah
+di objek yang sama. Kembalikan ke `false` setelah selesai merawat.
+
 ## Warna
 
 Tema gelap diatur di blok `:root` paling atas `<style>`:

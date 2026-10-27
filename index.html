@@ -137,6 +137,29 @@ img { display: block; max-width: 100%; }
 .news-body h3 { font-size: 17px; margin: 4px 0 8px; }
 .news-body p { font-size: 14px; color: var(--text-2); }
 
+/* ================== MAINTENANCE ================== */
+.maint-wrap { min-height: 70vh; display: flex; align-items: center; justify-content: center; }
+.maint-card {
+  max-width: 480px; width: 100%; text-align: center;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 40px 28px;
+  animation: panelIn .45s cubic-bezier(.2,.7,.2,1);
+}
+.maint-icon {
+  width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 50%;
+  background: var(--card-2); display: flex; align-items: center; justify-content: center;
+  font-size: 28px; animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+.maint-card h1 { font-size: 22px; margin-bottom: 12px; }
+.maint-card p { font-size: 14px; color: var(--text-2); margin-bottom: 10px; }
+.maint-status {
+  display: inline-block; font-size: 12px; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 999px;
+  padding: 4px 14px; margin-bottom: 16px;
+}
+.maint-card .btn { margin-top: 6px; }
+
 /* ================== RESPONSIF ================== */
 @media (max-width: 768px) {
   .banner { height: 250px; }
@@ -227,6 +250,20 @@ img { display: block; max-width: 100%; }
     <div class="news-list" id="newsList"></div>
   </section>
 
+  <!-- ================== MAINTENANCE ================== -->
+  <section class="panel" id="panel-maintenance">
+    <div class="maint-wrap">
+      <div class="maint-card">
+        <div class="maint-icon">🔧</div>
+        <h1 id="maintTitle"></h1>
+        <div class="maint-status" id="maintStatus"></div>
+        <p id="maintMsg"></p>
+        <p id="maintBug"></p>
+        <a class="btn" id="maintContact" target="_blank" rel="noopener">Lapor Bug via Discord</a>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <script>
@@ -269,6 +306,15 @@ const CONFIG = {
     { date: "5 Sep 2026", title: "create america map in slotcar", text: "status: work in progress", image: "asset/mapscapemay.png" },
     { date: "21 Okt 2026", title: "make new rims for bike", text: "status: work in progress", image: "asset/rimsnews.jpg" },
   ],
+
+  // --- Mode perawatan: ubah "enabled" ke true untuk menampilkan halaman perawatan ---
+  maintenance: {
+    enabled: false,
+    title: "Sedang Dalam Perawatan",
+    status: "Maintenance · kembali sebentar lagi",
+    message: "Kami sedang merapikan beberapa bagian website. Coba buka lagi nanti ya!",
+    bugNote: "Menemukan Ide? Laporkan lewat Discord di bawah, akan segera kami perbaiki.",
+  },
 };
 /* ===================== AKHIR KONFIGURASI ===================== */
 
@@ -283,6 +329,20 @@ function placeholder(w, h, label) {
 const $ = id => document.getElementById(id);
 const discordUrl = "https://discord.gg/" + CONFIG.discord.invite;
 const tiktokUrl = "https://www.tiktok.com/@" + CONFIG.tiktok.username;
+
+/* ---------- Mode perawatan (kalau CONFIG.maintenance.enabled = true) ---------- */
+const M = CONFIG.maintenance || {};
+const MAINT_ON = !!M.enabled;
+if (MAINT_ON) {
+  document.querySelector(".nav-tabs").style.display = "none";
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+  $("panel-maintenance").classList.add("active");
+  $("maintTitle").textContent = M.title || "Sedang Dalam Perawatan";
+  $("maintStatus").textContent = M.status || "";
+  $("maintMsg").textContent = M.message || "";
+  $("maintBug").textContent = M.bugNote || "";
+  $("maintContact").href = discordUrl;
+}
 
 /* ---------- Tab (tetap di halaman ini, dengan animasi) ---------- */
 $("navLogo").textContent = CONFIG.name;
@@ -307,7 +367,7 @@ tabsEl.addEventListener("click", e => {
   const b = e.target.closest(".nav-tab");
   if (b) showTab(b.dataset.tab);
 });
-window.addEventListener("resize", () => showTab(document.querySelector(".nav-tab.active").dataset.tab, false));
+window.addEventListener("resize", () => { const a = document.querySelector(".nav-tab.active"); if (a && !MAINT_ON) showTab(a.dataset.tab, false); });
 
 /* ---------- Home ---------- */
 $("bannerImg").src = CONFIG.bannerUrl || placeholder(1200, 320, "BANNER");
@@ -375,7 +435,7 @@ $("newsList").innerHTML = CONFIG.news.map((n, i) =>
    </article>`).join("");
 
 /* Buka tab sesuai hash (#discord, #tiktok, #news) */
-showTab(location.hash.slice(1) || "home", false);
+if (!MAINT_ON) showTab(location.hash.slice(1) || "home", false);
 </script>
 </body>
 </html>
