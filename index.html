@@ -216,7 +216,7 @@ img { display: block; max-width: 100%; }
           <span><b id="ttLikes"></b>Likes</span>
         </div>
         <p class="desc" id="ttBio"></p>
-        <a class="btn" id="ttFollow" target="_blank" rel="noopener">Follow di TikTok</a>
+        <a class="btn" id="ttFollow" target="_blank" rel="noopener">Follow on TikTok</a>
       </div>
     </div>
   </section>
@@ -237,7 +237,7 @@ const CONFIG = {
   name: "deep garage",
   memberCount: "554 member",        // dipakai kalau data Discord gagal dimuat
   bannerUrl: "asset/banner.png",
-  profileUrl: "asset/profile.png",
+  profileUrl: "asset/indeep.png",
 
   about: [
     { title: "meet every week!", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "asset/meetws.png" },
@@ -255,19 +255,19 @@ const CONFIG = {
   // --- TikTok: isi manual (TikTok tidak menyediakan data publik otomatis) ---
   tiktok: {
     username: "deep.garage",
-    displayName: "deep garage",
-    avatar: "",                       // kosong = pakai profileUrl
-    following: "0",
-    followers: "0",
-    likes: "0",
-    bio: "Tulis bio TikTok di sini.",
+    displayName: "indeep",
+    banner: "asset/bannertiktok.png",
+    avatar: "asset/indeep.png",                       // kosong = pakai profileUrl
+    following: "94",
+    followers: "359",
+    likes: "16.6k",
+    bio: "hit your limits",
   },
 
   // --- News: tambah/hapus item sesuka hati ---
   news: [
-    { date: "26 Okt 2026", title: "Judul berita 1", text: "Isi info singkat berita di sini.", image: "" },
-    { date: "20 Okt 2026", title: "Judul berita 2", text: "Isi info singkat berita di sini.", image: "" },
-    { date: "12 Okt 2026", title: "Judul berita 3", text: "Isi info singkat berita di sini.", image: "" },
+    { date: "5 Sep 2026", title: "create america map in slotcar", text: "status: work in progress", image: "asset/mapscapemay.png" },
+    { date: "21 Okt 2026", title: "make new rims for bike", text: "status: work in progress", image: "asset/rimsnews.jpg" },
   ],
 };
 /* ===================== AKHIR KONFIGURASI ===================== */
@@ -354,7 +354,7 @@ setInterval(syncDiscord, 60000);   // perbarui tiap 1 menit
 /* ---------- TikTok (profil saja, tanpa postingan) ---------- */
 const tt = CONFIG.tiktok;
 $("ttAvatar").src = tt.avatar || CONFIG.profileUrl || placeholder(96, 96, "FOTO");
-$("ttBanner").src = placeholder(480, 120, "");
+$("ttBanner").src = tt.banner || placeholder(480, 120, "");
 $("ttName").textContent = tt.displayName;
 $("ttHandle").textContent = "@" + tt.username;
 $("ttFollowing").textContent = tt.following;
