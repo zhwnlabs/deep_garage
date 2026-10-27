@@ -160,6 +160,15 @@ img { display: block; max-width: 100%; }
 }
 .maint-card .btn { margin-top: 6px; }
 
+/* ================== SLIDER ABOUT ================== */
+.about-photo video { width:100%; height:auto; border-radius:var(--radius); border:1px solid var(--border); background:var(--card); display:block; }
+.slider { position:relative; overflow:hidden; border-radius:var(--radius); border:1px solid var(--border); background:var(--card); touch-action:pan-y; cursor:grab; }
+.slider-track { display:flex; transition:transform .5s cubic-bezier(.4,0,.2,1); }
+.slider-track img { flex:0 0 100%; width:100%; height:auto; border:none !important; border-radius:0 !important; user-select:none; -webkit-user-drag:none; pointer-events:none; }
+.slider-dots { position:absolute; bottom:10px; left:0; right:0; display:flex; justify-content:center; gap:6px; }
+.slider-dots button { width:8px; height:8px; border-radius:50%; border:none; background:rgba(229,229,229,.4); cursor:pointer; padding:0; transition:background .2s, width .2s; }
+.slider-dots button.on { background:var(--text); width:18px; border-radius:4px; }
+
 /* ================== RESPONSIF ================== */
 @media (max-width: 768px) {
   .banner { height: 250px; }
@@ -277,9 +286,11 @@ const CONFIG = {
   profileUrl: "asset/indeep.png",
 
   about: [
-    { title: "meet every week!", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "asset/meetws.png" },
-    { title: "make your car better", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "asset/gt86.png" },
-    { title: "customize anything", text: "Tulis deskripsi singkat tentang foto ini di sini.", image: "asset/erogsoy.png" },
+    // "video": file .mp4 (diputar otomatis, tanpa suara). Kalau kosong, pakai "image".
+    { title: "meet every week!", text: "Tulis deskripsi singkat tentang foto ini di sini.", video: "asset/meetws.mp4", image: "asset/meetws.png" },
+    // "images": daftar foto yang bergeser sendiri (bisa digeser manual juga)
+    { title: "make your car better", text: "Tulis deskripsi singkat tentang foto ini di sini.", images: ["asset/gt86.png", "asset/gt86-2.png", "asset/gt86-3.png"] },
+    { title: "customize anything", text: "Tulis deskripsi singkat tentang foto ini di sini.", images: ["asset/erogsoy.png", "asset/erogsoy-2.png", "asset/erogsoy-3.png"] },
   ],
 
   // --- Discord: kode invite (bagian akhir link discord.gg/XXXX) ---
@@ -375,11 +386,38 @@ $("profileImg").src = CONFIG.profileUrl || placeholder(200, 200, "FOTO");
 $("communityName").textContent = CONFIG.name;
 $("memberCount").textContent = CONFIG.memberCount;
 $("joinBtn").href = discordUrl;
+function aboutMedia(a, i) {
+  if (a.video) return `<video src="${a.video}" poster="${a.image || ""}" autoplay muted loop playsinline preload="metadata"></video>`;
+  const imgs = (a.images && a.images.length) ? a.images : [a.image || placeholder(640, 420, "FOTO " + (i + 1))];
+  if (imgs.length === 1) return `<img src="${imgs[0]}" alt="${a.title}" loading="lazy">`;
+  return `<div class="slider"><div class="slider-track">${imgs.map(src =>
+    `<img src="${src}" alt="${a.title}" loading="lazy">`).join("")}</div>
+    <div class="slider-dots">${imgs.map((_, k) => `<button aria-label="Foto ${k + 1}"></button>`).join("")}</div></div>`;
+}
 $("aboutList").innerHTML = CONFIG.about.map((a, i) =>
   `<div class="about-row${i % 2 === 1 ? " reverse" : ""}">
      <div class="about-text"><h3>${a.title}</h3><p>${a.text}</p></div>
-     <div class="about-photo"><img src="${a.image || placeholder(640, 420, "FOTO " + (i + 1))}" alt="${a.title}" loading="lazy"></div>
+     <div class="about-photo">${aboutMedia(a, i)}</div>
    </div>`).join("");
+
+/* Slider: geser otomatis tiap 3,5 detik + bisa digeser (swipe/drag) */
+document.querySelectorAll(".slider").forEach(sl => {
+  const track = sl.querySelector(".slider-track");
+  const dots = [...sl.querySelectorAll(".slider-dots button")];
+  const n = dots.length; let idx = 0, timer, startX = null, dx = 0;
+  const go = k => { idx = (k + n) % n; track.style.transform = `translateX(${-idx * 100}%)`;
+    dots.forEach((d, j) => d.classList.toggle("on", j === idx)); };
+  const auto = () => { clearInterval(timer); timer = setInterval(() => go(idx + 1), 3500); };
+  dots.forEach((d, j) => d.onclick = () => { go(j); auto(); });
+  sl.addEventListener("pointerdown", e => { startX = e.clientX; dx = 0; track.style.transition = "none"; clearInterval(timer); });
+  sl.addEventListener("pointermove", e => { if (startX === null) return; dx = e.clientX - startX;
+    track.style.transform = `translateX(calc(${-idx * 100}% + ${dx}px))`; });
+  const end = () => { if (startX === null) return; track.style.transition = "";
+    const w = sl.offsetWidth; startX = null;
+    go(Math.abs(dx) > w * 0.15 ? idx + (dx < 0 ? 1 : -1) : idx); auto(); };
+  sl.addEventListener("pointerup", end); sl.addEventListener("pointerleave", end); sl.addEventListener("pointercancel", end);
+  go(0); auto();
+});
 
 /* ---------- Discord (jumlah member sinkron dari Discord) ---------- */
 $("dcName").textContent = CONFIG.name;
