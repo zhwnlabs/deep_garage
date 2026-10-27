@@ -256,7 +256,8 @@ const CONFIG = {
   tiktok: {
     username: "deep.garage",
     displayName: "indeep",
-    avatar: "asset/pfp.png",                       // kosong = pakai profileUrl
+    banner: "asset/bannertiktok.png",
+    avatar: "asset/pfp.jpg",                       // kosong = pakai profileUrl
     following: "94",
     followers: "359",
     likes: "16.6k",
@@ -354,7 +355,7 @@ setInterval(syncDiscord, 60000);   // perbarui tiap 1 menit
 /* ---------- TikTok (profil saja, tanpa postingan) ---------- */
 const tt = CONFIG.tiktok;
 $("ttAvatar").src = tt.avatar || CONFIG.profileUrl || placeholder(96, 96, "FOTO");
-$("ttBanner").src = placeholder(480, 120, "");
+$("ttBanner").src = tt.banner || placeholder(480, 120, "");
 $("ttName").textContent = tt.displayName;
 $("ttHandle").textContent = "@" + tt.username;
 $("ttFollowing").textContent = tt.following;
