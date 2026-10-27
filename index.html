@@ -335,6 +335,7 @@ const M = CONFIG.maintenance || {};
 const MAINT_ON = !!M.enabled;
 if (MAINT_ON) {
   document.querySelector(".nav-tabs").style.display = "none";
+  document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
   $("panel-maintenance").classList.add("active");
   $("maintTitle").textContent = M.title || "Sedang Dalam Perawatan";
   $("maintStatus").textContent = M.status || "";
